@@ -59,11 +59,11 @@ const CurrencyConvertor: React.FC = () => {
       <div>
         <label htmlFor="sourceCurrency">Source
           Currency:</label>
-        <select onChange={handleSourceDropdownChange} id="sourceCurrency">
-          <option value="840">USD</option>
-          <option value="978">EUR</option>
-          <option value="356">INR</option>
-          <option value="392">JPY</option>
+        <select data-testid="select" onChange={handleSourceDropdownChange} id="sourceCurrency">
+          <option data-testid="select-option" value="840">USD</option>
+          <option data-testid="select-option" value="978">EUR</option>
+          <option data-testid="select-option" value="356">INR</option>
+          <option data-testid="select-option" value="392">JPY</option>
         </select>
         <label htmlFor="targetCurrency">Target Currency:</label>
         <select onChange={handleTargetDropdownChange} id="targetCurrency">
@@ -79,10 +79,11 @@ const CurrencyConvertor: React.FC = () => {
       {errorMandidateMessage?<div style={{color:'red'}}>{errorMandidateMessage}</div>:null}
       </div>
       <button onClick={() => fetchExchangeRates()}>Convert</button>
+      {errorMessage?<div style={{color:'red'}}>{errorMessage}</div>:null}
       <div>
         <label htmlFor="convertedAmount">Converted Amount:</label>
         {
-          exchangeResponse?.convertedAmount ? <span id="convertedAmount">{exchangeResponse?.convertedAmount}</span> : <></>
+          exchangeResponse?.convertedAmount ? <span id="convertedAmount" style={{backgroundColor:'yellow'}}>{exchangeResponse?.convertedAmount}</span> : <></>
         }
       </div>
       
