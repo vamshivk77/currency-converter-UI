@@ -1,33 +1,27 @@
-// MyComponent.test.js
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { HttpResponse, http  } from 'msw';
-import { setupServer } from 'msw/node';
-import '@testing-library/jest-dom/extend-expect';
+import { converterHandler, converterHandlerException } from '../mock-api/handlers';
+import { mswServer } from '../mock-api/msw-server';
 import CurrencyConverter from './CurrencyConverter';
 
+let mockRates = {
+  convertedAmount:
+    0.19191555715485187,
+  exchangeRate: 1
+}
+describe('Component: CurrencyConverter', () => {
+  it('displays returned tasks on successful fetch', async () => {
+    mswServer.use(converterHandler);
+    render(<CurrencyConverter />);
+    const displayedAmount = await  screen.findByTestId("convertedAmount");
+     expect(displayedAmount).toHaveStyle("background-color:yellow");
+  });
 
+  it('displays error message when fetching tasks raises error', async () => {
+    mswServer.use(converterHandlerException);
+    render(<CurrencyConverter />);
 
-const server = setupServer(
-  http.get('http://localhost:3000/exchange-rates', () => {
-    console.log(HttpResponse.json())
-     return HttpResponse.json()
-  })
-);
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
-test('renders data from API', async () => {
-  render(<CurrencyConverter />);
-
-  // Loading state
-  expect(screen.getByText('Loading...')).toBeInTheDocument();
-
-  // Wait for the API call to complete
-  await waitFor(() => screen.getByText('Data: Hello, testing!'));
-
-  // Check if the component renders the data
-  expect(screen.getByText('Data: Hello, testing!')).toBeInTheDocument();
+    const errorDisplay = await screen.findByTestId('error');
+  
+    expect(errorDisplay).toHaveStyle("color: red");
+  });
 });

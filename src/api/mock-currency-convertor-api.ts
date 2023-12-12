@@ -19,6 +19,7 @@ const convertCurrency = (fromCurrency: string, toCurrency: string, amount: any) 
 
 
 mock.onGet('/exchange-rates').reply((config:any) => {
+  console.log(config.params)
   const base = config.params;
   const { exchangeRate, totalAmount } = convertCurrency(base.sourceCurrency, base.targetCurrency, base.amount)
   if (base.sourceCurrency in exchangeRates && base.targetCurrency in exchangeRates) {
