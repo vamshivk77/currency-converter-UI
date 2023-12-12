@@ -19,7 +19,8 @@ const CurrencyConvertor: React.FC = () => {
 
   const fetchExchangeRates = async () => {
     setErrorMessage("")
-    if(amount>1){
+    setErrorMandidateMessage("")
+    if (amount >= 1) {
       try {
         const response = await axios.get('/exchange-rates',
           {
@@ -31,13 +32,16 @@ const CurrencyConvertor: React.FC = () => {
           }
         );
         setExchangeResponse(response.data);
-      } catch (error:any) {
-        setErrorMessage(error?.response?.data?.message ? error?.response?.data?.message:'')
+        console.log(response)
+      } catch (error: any) {
+        setAmount(0)
+        console.log(error?.response)
+        setErrorMessage(error?.response?.data?.message ? error?.response?.data?.message : '')
       }
-    }else{
+    } else {
       setErrorMandidateMessage("Please fill the amount")
     }
-    
+
   };
 
 
@@ -74,19 +78,17 @@ const CurrencyConvertor: React.FC = () => {
         </select>
       </div>
       <div >
-      <label htmlFor="amount">Enter Amount:</label>
-      <input width={"100px"} min="0" onChange={handleInputChange} id="amount" type="number" />
-      {errorMandidateMessage?<div style={{color:'red'}}>{errorMandidateMessage}</div>:null}
+        <label htmlFor="amount">Enter Amount:</label>
+        <input value={amount} width={"100px"} min="0" onChange={handleInputChange} id="amount" type="number" />
+        {errorMandidateMessage ? <div style={{ color: 'red' }}>{errorMandidateMessage}</div> : null}
       </div>
       <button onClick={() => fetchExchangeRates()}>Convert</button>
-      {errorMessage?<div style={{color:'red'}}>{errorMessage}</div>:null}
+       <div data-testid="error" id='error' style={{ color: 'red' }}>{errorMessage}</div> 
       <div>
         <label htmlFor="convertedAmount">Converted Amount:</label>
-        {
-          exchangeResponse?.convertedAmount ? <span id="convertedAmount" style={{backgroundColor:'yellow'}}>{exchangeResponse?.convertedAmount}</span> : <></>
-        }
+        <span data-testid="convertedAmount" id="convertedAmount" style={{ backgroundColor: 'yellow' }}>{exchangeResponse?.convertedAmount}</span> 
       </div>
-      
+
     </div>
   );
 };
