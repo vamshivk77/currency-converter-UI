@@ -1,18 +1,33 @@
-// CurrencyConverter.test.js
+// MyComponent.test.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { HttpResponse, http  } from 'msw';
+import { setupServer } from 'msw/node';
+import '@testing-library/jest-dom/extend-expect';
 import CurrencyConverter from './CurrencyConverter';
 
 
-test('renders currency converter with default values', () => {
+
+const server = setupServer(
+  http.get('http://localhost:3000/exchange-rates', () => {
+    console.log(HttpResponse.json())
+     return HttpResponse.json()
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+test('renders data from API', async () => {
   render(<CurrencyConverter />);
 
-  const amountInput = screen.getByLabelText(/Amount:/i);
-  const sourceCurrency = screen.getByLabelText(/Source Currency:/i);
-  const targetCurrency = screen.getByText(/Converted Amount:/i);
+  // Loading state
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
 
-  expect(amountInput).toHaveValue(0);
-  expect(sourceCurrency).toHaveValue('USD');
-  expect(targetCurrency).toHaveValue('USD');
+  // Wait for the API call to complete
+  await waitFor(() => screen.getByText('Data: Hello, testing!'));
+
+  // Check if the component renders the data
+  expect(screen.getByText('Data: Hello, testing!')).toBeInTheDocument();
 });
-

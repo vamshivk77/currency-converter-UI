@@ -1,4 +1,3 @@
-// src/mockApi.ts
 
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
@@ -19,13 +18,13 @@ const convertCurrency = (fromCurrency: string, toCurrency: string, amount: any) 
 }
 
 
-mock.onGet('/exchange-rates').reply(config => {
+mock.onGet('/exchange-rates').reply((config:any) => {
   const base = config.params;
   const { exchangeRate, totalAmount } = convertCurrency(base.sourceCurrency, base.targetCurrency, base.amount)
   if (base.sourceCurrency in exchangeRates && base.targetCurrency in exchangeRates) {
     return [200, { exchangeRate: exchangeRate, convertedAmount: totalAmount }]
   }
-  return [500, { message: "does not exist" }]
+  return [500, { message: "Does not exist. Please try another currency" }]
 });
 
 export default axios;
